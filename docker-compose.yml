@@ -32,28 +32,6 @@ services:
     depends_on:
       - resolvable
 
-  bookopedia:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    working_dir: /usr/src/app
-    volumes:
-      - ./web-app:/usr/src/app
-    environment:
-      POSTGRES_USER: bookopedia
-      POSTGRES_PASSWORD: bookopedia
-      POSTGRES_DB: bookopedia
-    command: "node server.js"
-    ports:
-      - "8080:80"
-    networks:
-      dev-network:
-        aliases:
-          - www.bookopedia.com
-    depends_on:
-      - resolvable
-      - bookopedia_postgres
-
   resolvable:
     image: mgood/resolvable
     volumes:
