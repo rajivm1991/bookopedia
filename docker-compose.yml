@@ -1,0 +1,72 @@
+version: '3.3'
+services:
+  bookopedia_postgres:
+    image: postgres:9.4
+    container_name: bookopedia_postgres
+    volumes:
+      - /belong/bookopedia_postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: bookopedia
+      POSTGRES_PASSWORD: bookopedia
+      POSTGRES_DB: bookopedia
+    networks:
+      dev-network:
+        aliases:
+          - bookopedia_postgres
+    depends_on:
+      - resolvable
+
+  bookopedia_es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.2
+    container_name: bookopedia_es
+    volumes:
+      - bookopedia_es_volume:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+    networks:
+      dev-network:
+        aliases:
+          - es.bookopedia.com
+    depends_on:
+      - resolvable
+
+  bookopedia:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    working_dir: /usr/src/app
+    volumes:
+      - ./web-app:/usr/src/app
+    environment:
+      POSTGRES_USER: bookopedia
+      POSTGRES_PASSWORD: bookopedia
+      POSTGRES_DB: bookopedia
+    command: "node server.js"
+    ports:
+      - "8080:80"
+    networks:
+      dev-network:
+        aliases:
+          - www.bookopedia.com
+    depends_on:
+      - resolvable
+      - bookopedia_postgres
+
+  resolvable:
+    image: mgood/resolvable
+    volumes:
+      - /etc/resolv.conf:/tmp/resolv.conf
+      - /var/run/docker.sock:/tmp/docker.sock
+    networks:
+      dev-network:
+        aliases:
+          - resolvable
+
+networks:
+  dev-network:
+    driver: bridge
+
+volumes:
+  bookopedia_es_volume:

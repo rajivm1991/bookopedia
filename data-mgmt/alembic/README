@@ -1,0 +1,10 @@
+Instruction for migrating.
+==========================
+
+To Make Migrations
+
+    alembic revision --autogenerate
+
+To Migrate
+
+    alembic upgrade head
