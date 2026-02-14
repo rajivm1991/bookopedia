@@ -11,6 +11,6 @@
     "bluebird": "^3.7.2",
     "elasticsearch": "^16.5.0",
     "express": "^4.22.1",
-    "pg-promise": "10.3.1"
+    "pg-promise": "11.5.5"
   }
 }
